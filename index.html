@@ -1,1443 +1,260 @@
-<script>
-    // Parallax effect
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const parallax = document.querySelector('.parallax-bg');
-        if (parallax) {
-            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
-        }
-    });
-
-    // Scroll reveal animation
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.benefit-card, .testimonial, .product-card, .step').forEach(el => {
-        el.classList.add('scroll-reveal');
-        observer.observe(el);
-    });
-
-    // Magnetic button effect
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.classList.add('magnetic-btn');
-        
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.05)`;
-        });
-        
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = 'translate(0px, 0px) scale(1)';
-        });
-    });
-
-    // Cursor trail effect
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor-trail';
-    document.body.appendChild(cursor);
-
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-    // Enhanced add to cart functionality
-    document.querySelectorAll('.btn-primary').forEach(button => {
-        if (button.textContent.includes('Añadir al Carrito')) {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Create success particle effect
-                const rect = this.getBoundingClientRect();
-                for (let i = 0; i < 5; i++) {
-                    const particle = document.createElement('div');
-                    particle.innerHTML = '✨';
-                    particle.style.position = 'fixed';
-                    particle.style.left = rect.left + rect.width/2 + 'px';
-                    particle.style.top = rect.top + rect.height/2 + 'px';
-                    particle.style.fontSize = '20px';
-                    particle.style.pointerEvents = 'none';
-                    particle.style.zIndex = '9999';
-                    particle.style.transition = 'all 1s ease-out';
-                    document.body.appendChild(particle);
-                    
-                    setTimeout(() => {
-                        particle.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${-50 - Math.random() * 50}px)`;
-                        particle.style.opacity = '0';
-                    }, 100);
-                    
-                    setTimeout(() => {
-                        document.body.removeChild(particle);
-                    }, 1100);
-                }
-                
-                this.textContent = '✓ Añadido';
-                this.style.background = '#28a745';
-                this.style.transform = 'scale(0.95)';
-                
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-                
-                setTimeout(() => {
-                    this.textContent = 'Añadir al Carrito';
-                    this.style.background = '';
-                }, 2000);
-            });
-        }
-    });
-
-    // Typewriter effect for hero text
-    const heroTitle = document.querySelector('.hero h1');
-    if (heroTitle) {
-        const text = heroTitle.textContent;
-        heroTitle.textContent = '';
-        heroTitle.style.borderRight = '3px solid #d4af37';
-        
-        let i = 0;
-        const typeWriter = () => {
-            if (i < text.length) {
-                heroTitle.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            } else {
-                // Blinking cursor effect
-                setInterval(() => {
-                    heroTitle.style.borderColor = heroTitle.style.borderColor === 'transparent' ? '#d4af37' : 'transparent';
-                }, 500);
-            }
-        };
-        
-        setTimeout(typeWriter, 1500);
-    }
-
-    // Countdown timer for offer
-    const timer = document.querySelector('.offer-timer');
-    if (timer) {
-        let timeLeft = 24 * 60 * 60; // 24 hours in seconds
-        
-        const updateTimer = () => {
-            const hours = Math.floor(timeLeft / 3600);
-            const minutes = Math.floor((timeLeft % 3600) / 60);
-            const seconds = timeLeft % 60;
-            
-            timer.innerHTML = `⏰ Termina en: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft > 0) {
-                timeLeft--;
-            } else {
-                timeLeft = 24 * 60 * 60; // Reset to 24 hours
-            }
-        };
-        
-        updateTimer();
-        setInterval(updateTimer, 1000);
-    }
-
-    // 3D tilt effect for cards
-    document.querySelectorAll('.benefit-card, .product-card, .testimonial').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 10;
-            const rotateY = (centerX - x) / 10;
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-        });
-    });
-
-    // Floating elements animation
-    const createFloatingElement = () => {
-        const element = document.createElement('div');
-        element.innerHTML = ['✂️', '💈', '🥃', '👔'][Math.floor(Math.random() * 4)];
-        element.style.position = 'fixed';
-        element.style.left = Math.random() * window.innerWidth + 'px';
-        element.style.top = window.innerHeight + 'px';
-        element.style.fontSize = '20px';
-        element.style.opacity = '0.1';
-        element.style.pointerEvents = 'none';
-        element.style.zIndex = '1';
-        element.style.transition = 'all 15s linear';
-        
-        document.body.appendChild(element);
-        
-        setTimeout(() => {
-            element.style.top = '-100px';
-            element.style.transform = `translateX(${(Math.random() - 0.5) * 200}px) rotate(360deg)`;
-        }, 100);
-        
-        setTimeout(() => {
-            document.body.removeChild(element);
-        }, 15000);
-    };
-
-    // Create floating elements periodically
-    setInterval(createFloatingElement, 3000);
-
-    // Dynamic background patterns
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.opacity = '0.05';
-        canvas.style.pointerEvents = 'none';
-        hero.appendChild(canvas);
-        
-        const resizeCanvas = () => {
-            canvas.width = hero.offsetWidth;
-            canvas.height = hero.offsetHeight;
-        };
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        const particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5,
-                size: Math.random() * 2 + 1
-            });
-        }
-        
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#d4af37';
-            
-            particles.forEach(particle => {
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-                
-                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-                
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            
-            requestAnimationFrame(animate);
-        };
-        
-        animate();
-    }
-
-    // Performance optimization: Intersection Observer for heavy animations
-    const heavyAnimationObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-heavy');
-            } else {
-                entry.target.classList.remove('animate-heavy');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.gallery-item, .offer').forEach(el => {
-        heavyAnimationObserver.observe(el);
-    });
-</script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barbería Elite - Tu Corte Perfecto en Alicante</title>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Georgia', serif;
-        line-height: 1.6;
-        color: #1a1a1a;
-        background: #0a0a0a;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    /* Hero Section */
-    .hero {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="%23d4af37" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        opacity: 0.1;
-    }
-
-    .hero::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
-        animation: pulse 4s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulse {
-        0% { opacity: 0.3; }
-        100% { opacity: 0.7; }
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        color: white;
-    }
-
-    .hero h1 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 700;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #d4af37, #f4e4a6, #d4af37);
-        background-size: 300% 100%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        animation: shimmer 3s ease-in-out infinite, typewriter 4s steps(30) 1s both;
-        overflow: hidden;
-        border-right: 3px solid #d4af37;
-        white-space: nowrap;
-    }
-
-    @keyframes shimmer {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-
-    @keyframes typewriter {
-        from { width: 0; }
-        to { width: 100%; }
-    }
-
-    @keyframes blink {
-        50% { border-color: transparent; }
-    }
-
-    .hero h1::after {
-        animation: blink 1s infinite;
-    }
-
-    .hero p {
-        font-size: 1.3rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .cta-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-    }
-
-    .btn {
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 50px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .btn-primary {
-        background: linear-gradient(45deg, #d4af37, #f4e4a6);
-        color: #0a0a0a;
-        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: left 0.5s;
-    }
-
-    .btn-primary:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
-    }
-
-    .btn-secondary {
-        background: transparent;
-        color: #d4af37;
-        border: 2px solid #d4af37;
-    }
-
-    .btn-secondary:hover {
-        background: #d4af37;
-        color: #0a0a0a;
-        transform: translateY(-2px);
-    }
-
-    /* Benefits Section */
-    .benefits {
-        padding: 100px 0;
-        background: #f8f8f8;
-    }
-
-    .benefits h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-        color: #0a0a0a;
-    }
-
-    .benefits-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-    }
-
-    .benefit-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .benefit-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #d4af37, #f4e4a6);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease;
-    }
-
-    .benefit-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .benefit-card:hover {
-        transform: translateY(-10px) rotateX(5deg);
-        box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
-    }
-
-    .benefit-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        transition: transform 0.3s ease;
-    }
-
-    .benefit-card:hover .benefit-icon {
-        transform: scale(1.2) rotateY(360deg);
-    }
-
-    .benefit-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: #d4af37;
-    }
-
-    /* Gallery Section */
-    .gallery {
-        padding: 100px 0;
-        background: #1a1a1a;
-        color: white;
-    }
-
-    .gallery h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-        color: #d4af37;
-    }
-
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-
-    .gallery-item {
-        position: relative;
-        height: 250px;
-        border-radius: 15px;
-        overflow: hidden;
-        background: linear-gradient(45deg, #333, #555);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.4s ease;
-    }
-
-    .gallery-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, rgba(212, 175, 55, 0.1), rgba(244, 228, 166, 0.1));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .gallery-item::after {
-        content: '✨';
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 2rem;
-        opacity: 0;
-        transform: scale(0);
-        transition: all 0.3s ease;
-    }
-
-    .gallery-item:hover::before {
-        opacity: 1;
-    }
-
-    .gallery-item:hover::after {
-        opacity: 1;
-        transform: scale(1) rotate(180deg);
-    }
-
-    .gallery-item:hover {
-        transform: scale(1.05) rotateY(5deg);
-        box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
-    }
-
-    /* Testimonials */
-    .testimonials {
-        padding: 100px 0;
-        background: #f8f8f8;
-    }
-
-    .testimonials h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-    }
-
-    .testimonial-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-
-    .testimonial {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .testimonial::before {
-        content: '"';
-        position: absolute;
-        top: -20px;
-        left: 20px;
-        font-size: 4rem;
-        color: #d4af37;
-        opacity: 0.3;
-        font-family: Georgia, serif;
-    }
-
-    .testimonial:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 50px rgba(212, 175, 55, 0.15);
-    }
-
-    .testimonial-stars {
-        color: #d4af37;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        animation: sparkle 2s ease-in-out infinite;
-    }
-
-    @keyframes sparkle {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-
-    .testimonial-text {
-        font-style: italic;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-    }
-
-    .testimonial-author {
-        font-weight: bold;
-        color: #d4af37;
-    }
-
-    /* Offer Section */
-    .offer {
-        padding: 100px 0;
-        background: linear-gradient(135deg, #d4af37, #f4e4a6);
-        text-align: center;
-        color: #0a0a0a;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .offer::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 10px,
-            rgba(255,255,255,0.1) 10px,
-            rgba(255,255,255,0.1) 20px
-        );
-        animation: move 20s linear infinite;
-    }
-
-    @keyframes move {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    .offer h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        position: relative;
-        z-index: 2;
-        animation: bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-10px); }
-        60% { transform: translateY(-5px); }
-    }
-
-    .offer-timer {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 1rem 0;
-        position: relative;
-        z-index: 2;
-        background: rgba(0,0,0,0.1);
-        padding: 10px 20px;
-        border-radius: 50px;
-        display: inline-block;
-        animation: pulse-offer 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-offer {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    /* Steps Section */
-    .steps {
-        padding: 100px 0;
-        background: #0a0a0a;
-        color: white;
-    }
-
-    .steps h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-        color: #d4af37;
-    }
-
-    .steps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-    }
-
-    .step {
-        text-align: center;
-        padding: 2rem;
-    }
-
-    .step-number {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #d4af37, #f4e4a6);
-        color: #0a0a0a;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0 auto 1rem;
-        position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .step-number::before {
-        content: '';
-        position: absolute;
-        top: -5px;
-        left: -5px;
-        right: -5px;
-        bottom: -5px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #d4af37, #f4e4a6);
-        opacity: 0;
-        z-index: -1;
-        transition: opacity 0.3s ease;
-    }
-
-    .step:hover .step-number {
-        transform: scale(1.1) rotateZ(360deg);
-    }
-
-    .step:hover .step-number::before {
-        opacity: 0.3;
-        animation: ping 1s ease-out infinite;
-    }
-
-    @keyframes ping {
-        75%, 100% {
-            transform: scale(1.5);
-            opacity: 0;
-        }
-    }
-
-    .step h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: #d4af37;
-    }
-
-    /* Shop Section */
-    .shop {
-        padding: 100px 0;
-        background: #f8f8f8;
-    }
-
-    .shop h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-    }
-
-    .products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-    }
-
-    .product-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .product-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .product-image {
-        height: 200px;
-        background: linear-gradient(45deg, #333, #555);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-    }
-
-    .product-info {
-        padding: 1.5rem;
-    }
-
-    .product-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .product-price {
-        font-size: 1.5rem;
-        color: #d4af37;
-        font-weight: bold;
-        margin-bottom: 1rem;
-    }
-
-    .product-description {
-        color: #666;
-        margin-bottom: 1rem;
-    }
-
-    /* About Section */
-    .about {
-        padding: 100px 0;
-        background: #1a1a1a;
-        color: white;
-    }
-
-    .about-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        align-items: center;
-    }
-
-    .about-text h2 {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        color: #d4af37;
-    }
-
-    .about-text p {
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-        line-height: 1.8;
-    }
-
-    .about-image {
-        height: 400px;
-        background: linear-gradient(45deg, #333, #555);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-    }
-
-    /* Contact Section */
-    .contact {
-        padding: 100px 0;
-        background: #f8f8f8;
-    }
-
-    .contact h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-    }
-
-    .contact-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-    }
-
-    .contact-info {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-
-    .contact-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .contact-icon {
-        font-size: 1.5rem;
-        margin-right: 1rem;
-        color: #d4af37;
-    }
-
-    .map-placeholder {
-        height: 300px;
-        background: linear-gradient(45deg, #333, #555);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-    }
-
-    /* Footer */
-    .footer {
-        background: #0a0a0a;
-        color: white;
-        padding: 50px 0;
-        text-align: center;
-    }
-
-    .footer-content {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .footer-section h3 {
-        color: #d4af37;
-        margin-bottom: 1rem;
-    }
-
-    .social-links {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-
-    .social-link {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #d4af37;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #0a0a0a;
-        text-decoration: none;
-        font-size: 1.5rem;
-        transition: transform 0.3s ease;
-    }
-
-    .social-link:hover {
-        transform: scale(1.1);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .hero h1 {
-            font-size: 2.5rem;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-        }
-        
-        .cta-buttons {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .about-content {
-            grid-template-columns: 1fr;
-        }
-        
-        .contact-content {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* Parallax scrolling effect */
-    .parallax-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 120%;
-        background: linear-gradient(45deg, rgba(212, 175, 55, 0.02), transparent);
-        z-index: -1;
-        will-change: transform;
-    }
-
-    /* Scroll reveal animations */
-    .scroll-reveal {
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .scroll-reveal.revealed {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Premium cursor effects */
-    .cursor-trail {
-        position: fixed;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(212, 175, 55, 0.3), transparent);
-        pointer-events: none;
-        z-index: 9999;
-        transition: all 0.1s ease;
-    }
-
-    /* Micro-interactions */
-    .btn:active {
-        transform: scale(0.98);
-    }
-
-    /* Loading skeleton effect for images */
-    .skeleton-loader {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: loading 2s infinite;
-    }
-
-    @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-    }
-
-    /* Glass morphism effect */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Magnetic buttons */
-    .magnetic-btn {
-        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .hero-content {
-        animation: fadeInUp 1s ease-out;
-    }
-
-    /* Floating Action Button */
-    .floating-btn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #d4af37, #f4e4a6);
-        color: #0a0a0a;
-        border: none;
-        cursor: pointer;
-        font-size: 1.5rem;
-        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-        z-index: 1000;
-        transition: all 0.3s ease;
-        animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .floating-btn:hover {
-        transform: scale(1.1) translateY(-5px);
-        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
-        animation: shake 0.5s ease-in-out infinite;
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: scale(1.1) translateX(0); }
-        25% { transform: scale(1.1) translateX(-5px); }
-        75% { transform: scale(1.1) translateX(5px); }
-    }
-
-    .floating-btn::before {
-        content: '';
-        position: absolute;
-        top: -5px;
-        left: -5px;
-        right: -5px;
-        bottom: -5px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #d4af37, #f4e4a6);
-        z-index: -1;
-        animation: ping-float 2s ease-out infinite;
-    }
-
-    @keyframes ping-float {
-        75%, 100% {
-            transform: scale(1.5);
-            opacity: 0;
-        }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería Elite - Tu Corte Perfecto en Alicante</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- Hero Section -->
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1>Tu corte perfecto en 45 minutos</h1>
-            <p>Sin errores. Sin esperas. +4.000 clientes felices en Alicante.<br>
-            Reserva tu turno online o descubrí nuestra tienda de productos.</p>
-            <div class="cta-buttons">
-                <a href="#reservar" class="btn btn-primary">Reservá tu turno</a>
-                <a href="#tienda" class="btn btn-secondary">Ver Tienda Online</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Benefits Section -->
-<section class="benefits" id="beneficios">
-    <div class="container">
-        <h2>¿Por qué elegir Barbería Elite?</h2>
-        <div class="benefits-grid">
-            <div class="benefit-card">
-                <div class="benefit-icon">✂️</div>
-                <h3>Cortes Personalizados</h3>
-                <p>Cada corte es único. Estudiamos tu rostro y estilo para crear el look perfecto para ti.</p>
-            </div>
-            <div class="benefit-card">
-                <div class="benefit-icon">⏰</div>
-                <h3>Sin Esperas</h3>
-                <p>Reserva online y llega puntual. Tu tiempo es valioso y lo respetamos.</p>
-            </div>
-            <div class="benefit-card">
-                <div class="benefit-icon">🏆</div>
-                <h3>Ambiente Premium</h3>
-                <p>Espacio masculino, relajado y profesional. Aquí te sentís como en casa.</p>
-            </div>
-            <div class="benefit-card">
-                <div class="benefit-icon">💎</div>
-                <h3>Productos de Calidad</h3>
-                <p>Solo trabajamos con las mejores marcas. Llevate a casa lo que usamos contigo.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Gallery Section -->
-<section class="gallery">
-    <div class="container">
-        <h2>Nuestro Trabajo Habla Por Sí Solo</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item">Antes/Después - Corte Clásico</div>
-            <div class="gallery-item">Fade Moderno - Cliente Satisfecho</div>
-            <div class="gallery-item">Barba Perfilada - Resultado Final</div>
-            <div class="gallery-item">Corte Ejecutivo - Profesional</div>
-            <div class="gallery-item">Estilo Vintage - Transformación</div>
-            <div class="gallery-item">Corte + Barba - Combo Premium</div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials -->
-<section class="testimonials">
-    <div class="container">
-        <h2>Lo que dicen nuestros clientes</h2>
-        <div class="testimonial-grid">
-            <div class="testimonial">
-                <div class="testimonial-stars">★★★★★</div>
-                <div class="testimonial-text">"Mejor barbería de Alicante. Siempre salgo exactamente como quiero. Miguel sabe lo que hace."</div>
-                <div class="testimonial-author">- Carlos M.</div>
-            </div>
-            <div class="testimonial">
-                <div class="testimonial-stars">★★★★★</div>
-                <div class="testimonial-text">"Reservé online, llegué puntual, salí perfecto. Así de simple. Los productos que venden son top."</div>
-                <div class="testimonial-author">- Javier R.</div>
-            </div>
-            <div class="testimonial">
-                <div class="testimonial-stars">★★★★★</div>
-                <div class="testimonial-text">"Ambiente increíble, atención de 10. Ya no voy a ningún otro lado. Recomendado 100%."</div>
-                <div class="testimonial-author">- David L.</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Offer Section -->
-<section class="offer">
-    <div class="container">
-        <h2>🔥 Oferta Especial Esta Semana</h2>
-        <p style="font-size: 1.3rem; margin-bottom: 1rem;">CORTE + BARBA + PRODUCTOS</p>
-        <div class="offer-timer">Solo por 45€ (Precio normal: 60€)</div>
-        <p>Primera visita: 10% OFF mostrando esta web</p>
-        <a href="#reservar" class="btn btn-primary" style="margin-top: 1rem;">Aprovechar Oferta</a>
-    </div>
-</section>
-
-<!-- Steps Section -->
-<section class="steps">
-    <div class="container">
-        <h2>Cómo Funciona</h2>
-        <div class="steps-grid">
-            <div class="step">
-                <div class="step-number">1</div>
-                <h3>Reservá Online</h3>
-                <p>Elegí tu horario favorito desde el móvil. Fácil y rápido.</p>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <h3>Vení y Relajate</h3>
-                <p>Llegá puntual, sentate cómodo. Nosotros hacemos el resto.</p>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <h3>Salí Renovado</h3>
-                <p>Mirarte al espejo y sentir que estás impecable. Ese es el objetivo.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Shop Section -->
-<section class="shop" id="tienda">
-    <div class="container">
-        <h2>Tienda Online - Productos Premium</h2>
-        <div class="products-grid">
-            <div class="product-card">
-                <div class="product-image">Aceite para Barba Premium</div>
-                <div class="product-info">
-                    <div class="product-title">Aceite Barba Elite</div>
-                    <div class="product-price">24€</div>
-                    <div class="product-description">Huele a elegancia. Suaviza, nutre y da brillo natural.</div>
-                    <a href="#" class="btn btn-primary">Añadir al Carrito</a>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image">Pomada Fijadora</div>
-                <div class="product-info">
-                    <div class="product-title">Pomada Hold Strong</div>
-                    <div class="product-price">19€</div>
-                    <div class="product-description">Fijación todo el día. Acabado mate y natural.</div>
-                    <a href="#" class="btn btn-primary">Añadir al Carrito</a>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image">Kit Barba Completo</div>
-                <div class="product-info">
-                    <div class="product-title">Kit Barba Completa</div>
-                    <div class="product-price">49€ <span style="text-decoration: line-through; color: #999;">55€</span></div>
-                    <div class="product-description">Aceite + Bálsamo + Peine. Todo lo que necesitás.</div>
-                    <a href="#" class="btn btn-primary">Añadir al Carrito</a>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Tu corte perfecto en 45 minutos</h1>
+                <p>Sin errores. Sin esperas. +4.000 clientes felices en Alicante.<br>
+                Reserva tu turno online o descubrí nuestra tienda de productos.</p>
+                <div class="cta-buttons">
+                    <a href="#reservar" class="btn btn-primary">Reservá tu turno</a>
+                    <a href="#tienda" class="btn btn-secondary">Ver Tienda Online</a>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- About Section -->
-<section class="about">
-    <div class="container">
-        <div class="about-content">
-            <div class="about-text">
-                <h2>Miguel - Tu Barbero de Confianza</h2>
-                <p>Hace 15 años que dedico mi vida a esto. Empecé porque me cansé de ver hombres salir decepcionados de las barberías.</p>
-                <p>Aquí no hay prisa. Cada corte es una obra. Cada cliente sale sintiendo que invirtió bien su tiempo y dinero.</p>
-                <p>Mi diferencia es simple: te escucho, entiendo lo que querés, y lo hago realidad. Sin vuelta atrás.</p>
-            </div>
-            <div class="about-image">
-                Foto de Miguel - Barbero Profesional
+    <!-- Benefits Section -->
+    <section class="benefits" id="beneficios">
+        <div class="container">
+            <h2>¿Por qué elegir Barbería Elite?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">✂️</div>
+                    <h3>Cortes Personalizados</h3>
+                    <p>Cada corte es único. Estudiamos tu rostro y estilo para crear el look perfecto para ti.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <h3>Sin Esperas</h3>
+                    <p>Reserva online y llega puntual. Tu tiempo es valioso y lo respetamos.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🏆</div>
+                    <h3>Ambiente Premium</h3>
+                    <p>Espacio masculino, relajado y profesional. Aquí te sentís como en casa.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">💎</div>
+                    <h3>Productos de Calidad</h3>
+                    <p>Solo trabajamos con las mejores marcas. Llevate a casa lo que usamos contigo.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Contact Section -->
-<section class="contact" id="reservar">
-    <div class="container">
-        <h2>Reserva tu Turno o Visítanos</h2>
-        <div class="contact-content">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="contact-icon">📱</div>
-                    <div>
-                        <strong>WhatsApp:</strong><br>
-                        +34 666 123 456
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <div class="container">
+            <h2>Nuestro Trabajo Habla Por Sí Solo</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">Antes/Después - Corte Clásico</div>
+                <div class="gallery-item">Fade Moderno - Cliente Satisfecho</div>
+                <div class="gallery-item">Barba Perfilada - Resultado Final</div>
+                <div class="gallery-item">Corte Ejecutivo - Profesional</div>
+                <div class="gallery-item">Estilo Vintage - Transformación</div>
+                <div class="gallery-item">Corte + Barba - Combo Premium</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>Lo que dicen nuestros clientes</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <div class="testimonial-text">"Mejor barbería de Alicante. Siempre salgo exactamente como quiero. Miguel sabe lo que hace."</div>
+                    <div class="testimonial-author">- Carlos M.</div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <div class="testimonial-text">"Reservé online, llegué puntual, salí perfecto. Así de simple. Los productos que venden son top."</div>
+                    <div class="testimonial-author">- Javier R.</div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <div class="testimonial-text">"Ambiente increíble, atención de 10. Ya no voy a ningún otro lado. Recomendado 100%."</div>
+                    <div class="testimonial-author">- David L.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offer Section -->
+    <section class="offer">
+        <div class="container">
+            <h2>🔥 Oferta Especial Esta Semana</h2>
+            <p style="font-size: 1.3rem; margin-bottom: 1rem;">CORTE + BARBA + PRODUCTOS</p>
+            <div class="offer-timer">Solo por 45€ (Precio normal: 60€)</div>
+            <p>Primera visita: 10% OFF mostrando esta web</p>
+            <a href="#reservar" class="btn btn-primary" style="margin-top: 1rem;">Aprovechar Oferta</a>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="steps">
+        <div class="container">
+            <h2>Cómo Funciona</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Reservá Online</h3>
+                    <p>Elegí tu horario favorito desde el móvil. Fácil y rápido.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Vení y Relajate</h3>
+                    <p>Llegá puntual, sentate cómodo. Nosotros hacemos el resto.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Salí Renovado</h3>
+                    <p>Mirarte al espejo y sentir que estás impecable. Ese es el objetivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section class="shop" id="tienda">
+        <div class="container">
+            <h2>Tienda Online - Productos Premium</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">Aceite para Barba Premium</div>
+                    <div class="product-info">
+                        <div class="product-title">Aceite Barba Elite</div>
+                        <div class="product-price">24€</div>
+                        <div class="product-description">Huele a elegancia. Suaviza, nutre y da brillo natural.</div>
+                        <a href="#" class="btn btn-primary">Añadir al Carrito</a>
                     </div>
                 </div>
-                <div class="contact-item">
-                    <div class="contact-icon">📍</div>
-                    <div>
-                        <strong>Dirección:</strong><br>
-                        Calle Mayor 123, Alicante
+                <div class="product-card">
+                    <div class="product-image">Pomada Fijadora</div>
+                    <div class="product-info">
+                        <div class="product-title">Pomada Hold Strong</div>
+                        <div class="product-price">19€</div>
+                        <div class="product-description">Fijación todo el día. Acabado mate y natural.</div>
+                        <a href="#" class="btn btn-primary">Añadir al Carrito</a>
                     </div>
                 </div>
-                <div class="contact-item">
-                    <div class="contact-icon">🕒</div>
-                    <div>
-                        <strong>Horarios:</strong><br>
-                        L-V: 9:00-20:00<br>
-                        S: 9:00-14:00
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">📸</div>
-                    <div>
-                        <strong>Instagram:</strong><br>
-                        @barberia_elite_alicante
+                <div class="product-card">
+                    <div class="product-image">Kit Barba Completo</div>
+                    <div class="product-info">
+                        <div class="product-title">Kit Barba Completa</div>
+                        <div class="product-price">49€ <span style="text-decoration: line-through; color: #999;">55€</span></div>
+                        <div class="product-description">Aceite + Bálsamo + Peine. Todo lo que necesitás.</div>
+                        <a href="#" class="btn btn-primary">Añadir al Carrito</a>
                     </div>
                 </div>
             </div>
-            <div class="map-placeholder">
-                Google Maps - Ubicación Barbería Elite
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Miguel - Tu Barbero de Confianza</h2>
+                    <p>Hace 15 años que dedico mi vida a esto. Empecé porque me cansé de ver hombres salir decepcionados de las barberías.</p>
+                    <p>Aquí no hay prisa. Cada corte es una obra. Cada cliente sale sintiendo que invirtió bien su tiempo y dinero.</p>
+                    <p>Mi diferencia es simple: te escucho, entiendo lo que querés, y lo hago realidad. Sin vuelta atrás.</p>
+                </div>
+                <div class="about-image">
+                    Foto de Miguel - Barbero Profesional
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Barbería Elite</h3>
-                <p>Tu corte perfecto en Alicante</p>
-            </div>
-            <div class="footer-section">
-                <h3>Garantía</h3>
-                <p>Si no te encanta cómo quedás, no pagás.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Bonus Primera Visita</h3>
-                <p>Decí "Vengo de la web" y llevate un regalo sorpresa</p>
+    <!-- Contact Section -->
+    <section class="contact" id="reservar">
+        <div class="container">
+            <h2>Reserva tu Turno o Visítanos</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div>
+                            <strong>WhatsApp:</strong><br>
+                            +34 666 123 456
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <strong>Dirección:</strong><br>
+                            Calle Mayor 123, Alicante
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <div>
+                            <strong>Horarios:</strong><br>
+                            L-V: 9:00-20:00<br>
+                            S: 9:00-14:00
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📸</div>
+                        <div>
+                            <strong>Instagram:</strong><br>
+                            @barberia_elite_alicante
+                        </div>
+                    </div>
+                </div>
+                <div class="map-placeholder">
+                    Google Maps - Ubicación Barbería Elite
+                </div>
             </div>
         </div>
-        <div class="social-links">
-            <a href="#" class="social-link">📱</a>
-            <a href="#" class="social-link">📸</a>
-            <a href="#" class="social-link">📧</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Barbería Elite</h3>
+                    <p>Tu corte perfecto en Alicante</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Garantía</h3>
+                    <p>Si no te encanta cómo quedás, no pagás.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Bonus Primera Visita</h3>
+                    <p>Decí "Vengo de la web" y llevate un regalo sorpresa</p>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link">📱</a>
+                <a href="#" class="social-link">📸</a>
+                <a href="#" class="social-link">📧</a>
+            </div>
+            <p style="margin-top: 2rem; font-style: italic; color: #d4af37;">
+                "No es solo un corte. Es cómo te sentís cuando salís de acá.<br>
+                Si estás listo para verte bien y sentirte mejor, empezá hoy mismo."
+            </p>
         </div>
-        <p style="margin-top: 2rem; font-style: italic; color: #d4af37;">
-            "No es solo un corte. Es cómo te sentís cuando salís de acá.<br>
-            Si estás listo para verte bien y sentirte mejor, empezá hoy mismo."
-        </p>
-    </div>
-</footer>
+    </footer>
 
-<!-- Floating WhatsApp Button -->
-<button class="floating-btn" onclick="window.open('https://wa.me/34666123456', '_blank')">
-    💬
-</button>
+    <!-- Floating WhatsApp Button -->
+    <button class="floating-btn" onclick="window.open('https://wa.me/34666123456', '_blank')">
+        💬
+    </button>
 
-<script>
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // Add to cart functionality
-    document.querySelectorAll('.btn-primary').forEach(button => {
-        if (button.textContent.includes('Añadir al Carrito')) {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.textContent = '✓ Añadido';
-                this.style.background = '#28a745';
-                setTimeout(() => {
-                    this.textContent = 'Añadir al Carrito';
-                    this.style.background = '';
-                }, 2000);
-            });
-        }
-    });
-
-    // Intersection Observer for animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.animation = 'fadeInUp 0.6s ease-out';
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.benefit-card, .testimonial, .product-card').forEach(el => {
-        observer.observe(el);
-    });
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
